@@ -1,136 +1,165 @@
-# **Implementing GitHub Actions CI/CD Pipeline**
+# ⚡ GitHub Actions CI/CD Pipeline Implementation
 
-## **Configure Self-Hosted Runner**
+> Complete guide for implementing a DevSecOps CI/CD pipeline using GitHub Actions with Maven, Trivy, SonarQube, Docker, and Kubernetes deployment.
 
-1. Navigate to **GitHub** → **Settings** → **Actions** → **Runners**.
+## 📋 Prerequisites
+
+- GitHub repository
+- Linux environment for self-hosted runner
+- Docker installed
+- kubectl and kind installed
+- SonarQube instance
+- DockerHub account
+
+
+## 🔧 Implementation Steps
+
+### 1️⃣ Self-Hosted Runner Configuration
+
+#### 🏃‍♂️ Set Up GitHub Runner
+
+1. Navigate to **GitHub** → **Settings** → **Actions** → **Runners**
    
-   ![Runner Path](../images/runner-path-1.png)
+   ![Runner Path](./images/runner-path-1.png)
 
-2. Select **Linux**.
+2. Select **Linux** as your runner platform
    
-   ![Runner Selection](../images/runner-path-2.png)
+   ![Runner Selection](./images/runner-path-2.png)
 
-3. Follow the instructions to set up the runner.
+3. Follow the installation instructions provided by GitHub
    
-   ![Runner Installation](../images/runner-install.png)
+   ![Runner Installation](./images/runner-install.png)
 
-4. Start the runner and ensure it is idle.
+4. Verify the runner is active and idle
    
-   ![Runner Idle](../images/runner-idle.png)
+   ![Runner Idle](./images/runner-idle.png)
 
 ---
 
-## **Set Up SonarQube**
+### 2️⃣ SonarQube Setup & Integration
 
-### **Deploy SonarQube**
+#### 🐳 Deploy SonarQube
 
-1. Run SonarQube in a Docker container:
-   ```bash
-   docker run -d -p 9000:9000 sonarqube:lts-community
-   ```
+Deploy SonarQube using Docker:
 
-2. Open SonarQube in your web browser:
-   ```
-   http://<ip>:9000
-   ```
+```bash
+docker run -d -p 9000:9000 sonarqube:lts-community
+```
 
-3. Use the default credentials:
-   - **Username**: `admin`
-   - **Password**: `admin`
+Access SonarQube at: `http://<your-ip>:9000`
 
----
+> 🔐 **Default Credentials:** Username: `admin` | Password: `admin`
 
-## **Add SonarQube Secrets in GitHub**
+#### 🔑 Generate SonarQube Token
 
-### **1. Generate SonarQube Token**
-- Go to **SonarQube** → **Administration** → **Security**.
-  
-  ![Sonar Token Path](../images/sonar-token-path.png)
+1. Navigate to **SonarQube** → **Administration** → **Security**
+   
+   ![Sonar Token Path](./images/sonar-token-path.png)
 
-- Generate a new token.
-  
-  ![Sonar Token Create](../images/sonar-token-create.png)
-
-### **2. Add Secrets in GitHub**
-
-- Navigate to **GitHub** → **Settings** → **Secrets and Variables** → **Secrets**.
-- Add **Sonar Token**:
-  
-  ![Secret Sonar Token](../images/secret-sonar-token.png)
-
-- Add **Sonar Host URL**:
-  
-  ![Secret Sonar URL](../images/secret-sonar-url.png)
+2. Generate a new token for GitHub integration
+   
+   ![Sonar Token Create](./images/sonar-token-create.png)
 
 ---
 
-## **Create a KIND Cluster**
+### 3️⃣ GitHub Secrets Configuration
 
-### **1. Create the Cluster**
+#### 🔒 Add Required Secrets
 
-Run the following command:
-   ```bash
-   kind create cluster --config kind-config.yml
-   ```
+Navigate to **GitHub** → **Settings** → **Secrets and Variables** → **Actions**
 
-### **2. KIND Configuration File**
-   ```yaml
-   kind: Cluster
-   apiVersion: kind.x-k8s.io/v1alpha4
-   nodes:
-     - role: control-plane
-       extraPortMappings:
-         - containerPort: 30080
-           hostPort: 30080
-           protocol: TCP
-   ```
+1. **Add SonarQube Token:**
+   
+   ![Secret Sonar Token](./images/secret-sonar-token.png)
+
+2. **Add SonarQube Host URL:**
+   
+   ![Secret Sonar URL](./images/secret-sonar-url.png)
 
 ---
 
-## **Add Kubernetes Config Secret**
+### 4️⃣ Kubernetes Cluster Setup
 
-1. Get the Kubernetes configuration file as a base64-encoded string:
+#### 🎯 Create KIND Cluster
+
+```bash
+kind create cluster --config kind-config.yml
+```
+
+**kind-config.yml:**
+```yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 30080
+        hostPort: 30080
+        protocol: TCP
+```
+
+#### 🔧 Configure Kubernetes Access
+
+1. **Encode kubeconfig for GitHub Secrets:**
    ```bash
    base64 ~/.kube/config
    ```
-2. Copy and paste this encoded string into GitHub secrets.
+
+2. **Add encoded config to GitHub Secrets:**
    
-   ![Secret Kube Config](../images/secret-kube-config.png)
+   ![Secret Kube Config](./images/secret-kube-config.png)
 
 ---
 
-## **Add DockerHub Credentials**
+### 5️⃣ DockerHub Integration
 
-- Ensure all required secrets are added to GitHub:
-  
-  ![Secrets Overview](../images/secrets-all.png)
+#### 🐳 Add DockerHub Credentials
 
----
+Add your DockerHub username and password to GitHub Secrets for container registry access.
 
-## **Configure GitHub Actions Workflow**
+**Verify all secrets are configured:**
 
-### **Set Up Workflow**
-
-1. Navigate to **GitHub** → **Actions** → **Workflows**.
-2. Select **Java With Maven** workflow.
-3. Paste the CI/CD pipeline code form:  
-    [.github/workflows/github-action-cicd.yml](.github/workflows/github-action-cicd.yml)
-4. Save and commit the workflow file.
+![Secrets Overview](./images/secrets-all.png)
 
 ---
 
-## Verify 
+### 6️⃣ GitHub Actions Workflow Setup
 
-1. Verify k8s deployment
-![k8s-dep-final](../images/k8s-dep-final.png)
+#### 📝 Configure Workflow
 
----
-2. Open Sonar Status
-![soanr-final](../images/soanr-final.png)
+1. Navigate to **GitHub** → **Actions** → **Workflows**
+2. Select **Java with Maven** workflow template
+3. Replace the content with your CI/CD pipeline configuration from:
+   
+   📄 [.github/workflows/github-action-cicd.yml](.github/workflows/github-action-cicd.yml)
 
----
-3. Check the Pipeline Status
-![pipeline-status-final](../images/pipeline-status-final.png)
+4. Commit and save the workflow file
 
 
----
+## 🎯 Pipeline Verification
+
+### ✅ Deployment Verification
+
+**1. Kubernetes Deployment Status:**
+
+![k8s-dep-final](./images/k8s-dep-final.png)
+
+**2. SonarQube Analysis Results:**
+
+![soanr-final](./images/soanr-final.png)
+
+**3. Complete Pipeline Status:**
+
+![pipeline-status-final](./images/pipeline-status-final.png)
+
+
+## 🚀 Pipeline Stages Overview
+
+The GitHub Actions CI/CD pipeline includes:
+
+- **🔨 Build & Test** - Maven compilation and unit testing
+- **🛡️ Security Scanning** - Trivy vulnerability assessment
+- **📊 Code Quality** - SonarQube static analysis
+- **🐳 Container Build** - Docker image creation and push
+- **🚀 Deployment** - Kubernetes cluster deployment
+- **✅ Verification** - Post-deployment health checks

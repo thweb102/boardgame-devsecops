@@ -1,29 +1,69 @@
-# Implementing CI/CD Pipeline
+# 🚀 DevSecOps CI/CD Pipeline
 
-This repo covers the implementation of both GitLab CI/CD and GitHub Actions CI/CD pipelines. The pipelines are configured with the following tools and technologies:
+> **Complete implementation of GitLab CI/CD and GitHub Actions CI/CD pipelines with integrated security scanning, code quality analysis, and Kubernetes deployment.**
 
-## Features
+[![GitLab CI/CD](https://img.shields.io/badge/GitLab-CI%2FCD-orange?style=for-the-badge&logo=gitlab)](./docs/gitlab-cicd.md)
+[![GitHub Actions](https://img.shields.io/badge/GitHub-Actions-blue?style=for-the-badge&logo=github)](./docs/github-actions-cicd.md)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-Deployment-326CE5?style=for-the-badge&logo=kubernetes)](https://kubernetes.io/)
 
-- **Maven** for build automation
-- **Trivy** for security scanning
-- **SonarQube** for code quality analysis
-- **Docker** for containerization
-- **Kubernetes (K8s)** for deployment
-- **Self-hosted Runner** for executing jobs
 
-## Project Architecture
-![Architecture](./images/project_architecture.png)
+## 🎯 Project Overview
 
-## Documentation
+This repository demonstrates the implementation of modern DevSecOps practices through comprehensive CI/CD pipelines that integrate security scanning, code quality analysis, and automated deployment workflows.
 
-📌 Explore detailed documentation for setting up and configuring both GitLab CI/CD and GitHub Actions CI/CD.
+## 🛠️ Technology Stack
 
-### 🚀 **GitLab CI/CD**  
-Guide on implementing GitLab CI/CD.
-📖 [Read the GitLab CI/CD Guide](./docs/gitlab-cicd.md)
+| Category | Tools & Technologies |
+|----------|---------------------|
+| **🔨 Build Automation** | Maven |
+| **🛡️ Security Scanning** | Trivy |
+| **📊 Code Quality** | SonarQube |
+| **🐳 Containerization** | Docker |
+| **☸️ Orchestration** | Kubernetes (KIND) |
+| **🏃‍♂️ Execution Environment** | Self-hosted Runners |
 
-### ⚡ **GitHub Actions CI/CD**  
-Guide on implementing GitHub Actions CI/CD. 
-📖 [Read the GitHub Actions CI/CD Guide](./docs/github-actions-cicd.md)
+## 🏗️ Architecture
+
+The pipeline architecture implements a complete DevSecOps workflow:
+
+![Project Architecture](./docs/images/project_architecture.png)
+
+### Pipeline Flow:
+1. **Source Code** → Version control trigger
+2. **Build & Test** → Maven compilation and unit testing
+3. **Security Scan** → Trivy vulnerability assessment
+4. **Quality Gate** → SonarQube code analysis
+5. **Container Build** → Docker image creation
+6. **Deploy** → Kubernetes cluster deployment
+
+
+## 📖 Implementation Guides
+
+### GitLab CI/CD Pipeline
+Complete guide for implementing GitLab-based CI/CD with integrated DevSecOps practices.
+
+[![GitLab Guide](https://img.shields.io/badge/📖_Read_GitLab_Guide-FF6B35?style=for-the-badge)](./docs/gitlab-cicd.md)
+
+![GitLab Pipeline Status](./docs/images/pipeline_status.png)
 
 ---
+
+### GitHub Actions CI/CD Pipeline
+Comprehensive implementation of GitHub Actions workflow with complete DevSecOps integration.
+
+[![GitHub Guide](https://img.shields.io/badge/📖_Read_GitHub_Guide-2088FF?style=for-the-badge)](./docs/github-actions-cicd.md)
+
+![GitHub Actions Pipeline Status](./docs/images/pipeline-status-final.png)
+
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+<div align="center">
+
+**🚀 Happy DevOps-ing! 🚀**
+
+<!-- Made with ❤️ for the DevSecOps community -->
+
+</div>

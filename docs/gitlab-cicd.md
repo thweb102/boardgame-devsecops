@@ -1,107 +1,155 @@
-# Implementing GitLab CI/CD Pipeline
+# 🚀 GitLab CI/CD Pipeline Implementation
 
-This guide covers the implementation of a GitLab CI/CD pipeline.
+> A comprehensive guide to implementing a complete DevSecOps CI/CD pipeline using GitLab with Maven, Trivy, SonarQube, Docker, and Kubernetes.
 
-## Steps to Implement
+## 📋 Prerequisites
 
-### 1. Import the Project
-Start by importing the project into GitLab.
+- GitLab account
+- Linux VM for GitLab Runner
+- Docker installed
+- kubectl and kind installed
+- Basic knowledge of CI/CD concepts
+
+## 🔧 Implementation Steps
+
+### 1️⃣ Project Import
+
+Import your project repository into GitLab:
+
 ```bash
 https://github.com/atkaridarshan04/GitLab-CICD.git
 ```
 
-### 2. Configure the GitLab Runner
+### 2️⃣ GitLab Runner Configuration
 
-#### Create a VM
-1. Update the system packages:
-   ```bash
-   sudo apt update
-   ```
-2. Log in to GitLab and navigate to **Settings > CI/CD > Runners**.
-   ![Navigate to Runners](../images/runner_1.png)
-3. Register a new runner:
-     ![Provide Runner Tag](../images/runner_2.png)
-     ![Runner Installation Step 1](../images/runner_3.png)
-     ![Runner Installation Step 2](../images/runner_4.png)
-     ![Runner Installation Step 3](../images/runner_5.png)
+#### 🖥️ Prepare the VM Environment
 
----
+```bash
+sudo apt update && sudo apt upgrade -y
+```
 
-### 3. Set Up SonarQube
-#### Using Docker
-1. Deploy SonarQube using Docker:  
-   ```bash
-   docker run -d --name sonarqube -p 9000:9000 sonarqube:lts-community
-   ```
-   > **Note:** Username and password are both `admin`.
+#### 🏃‍♂️ Register GitLab Runner
 
-   ![SonarQube Deployment](../images/sonar_1.png)
+1. Navigate to **Settings** → **CI/CD** → **Runners** in your GitLab project
+   
+   ![Navigate to Runners](./images/runner_1.png)
 
-#### Configure SonarQube in GitLab
-1. Create a Personal Access Token (PAT) in GitLab with the required permissions:
-   ![Create PAT Step 1](../images/sonar_2.png)
-   ![Create PAT Step 2](../images/sonar_3.png)
-   ![Create PAT Step 3](../images/sonar_4.png)
-   ![Create PAT Step 4](../images/sonar_5.png)
-   ![Create PAT Step 5](../images/sonar_6.png)
-   ![Create PAT Step 6](../images/sonar_7.png)
-
-2. Create a file named `sonar-project.properties` in your project with the following content:
-   ![Edit sonar-project.properties](../images/sonar_08.png)
-   ![sonar-project.properties Example](../images/sonar_8.png)
-
-3. Add the PAT to GitLab CI/CD variables:
-   ![Add PAT Step 1](../images/sonar_09.png)
-   ![Add PAT Step 2](../images/sonar_9.png)
-   ![Add PAT Step 3](../images/sonar_10.png)
-   ![Add PAT Step 4](../images/sonar_11.png)
-   ![Add PAT Step 5](../images/sonar_12.png)
-   ![Add PAT Step 6](../images/sonar_13.png)
-
-4. Paste this stage in the pipeline file:
-   ![Pipeline Stage Example](../images/sonar_14.png)
-
-   > **Note:** Add the stage and remove the entrypoint for the container.
-
-   ![Entrypoint Removal Example](../images/sonar_15.png)
+2. Follow the runner registration process:
+   
+   ![Provide Runner Tag](./images/runner_2.png)
+   ![Runner Installation Step 1](./images/runner_3.png)
+   ![Runner Installation Step 2](./images/runner_4.png)
+   ![Runner Installation Step 3](./images/runner_5.png)
 
 ---
 
-### 4. Set Up Kubernetes Configuration
-1. Create a kind cluster 
-   ```bash
-   kind create cluster --config kind-config.yml
-   ```
-   kind-config.yml
-   ```yaml
-   kind: Cluster
-   apiVersion: kind.x-k8s.io/v1alpha4
-   nodes:
-   - role: control-plane
-     extraPortMappings:
-       - containerPort: 30080  
-         hostPort: 30080
-         protocol: TCP
-   ```
+### 3️⃣ SonarQube Setup & Integration
 
-2. Access your Kubernetes cluster configuration:
+#### 🐳 Deploy SonarQube with Docker
+
+```bash
+docker run -d --name sonarqube -p 9000:9000 sonarqube:lts-community
+```
+
+> 🔐 **Default Credentials:** Username: `admin` | Password: `admin`
+
+![SonarQube Deployment](./images/sonar_1.png)
+
+#### 🔑 Configure SonarQube Integration
+
+1. **Generate Personal Access Token (PAT):**
+   
+   ![Create PAT Step 1](./images/sonar_2.png)
+   ![Create PAT Step 2](./images/sonar_3.png)
+   ![Create PAT Step 3](./images/sonar_4.png)
+   ![Create PAT Step 4](./images/sonar_5.png)
+   ![Create PAT Step 5](./images/sonar_6.png)
+   ![Create PAT Step 6](./images/sonar_7.png)
+
+2. **Create `sonar-project.properties` file:**
+   
+   ![Edit sonar-project.properties](./images/sonar_08.png)
+   ![sonar-project.properties Example](./images/sonar_8.png)
+
+3. **Add PAT to GitLab CI/CD Variables:**
+   
+   ![Add PAT Step 1](./images/sonar_09.png)
+   ![Add PAT Step 2](./images/sonar_9.png)
+   ![Add PAT Step 3](./images/sonar_10.png)
+   ![Add PAT Step 4](./images/sonar_11.png)
+   ![Add PAT Step 5](./images/sonar_12.png)
+   ![Add PAT Step 6](./images/sonar_13.png)
+
+4. **Configure Pipeline Stage:**
+   
+   ![Pipeline Stage Example](./images/sonar_14.png)
+   
+   > ⚠️ **Important:** Remove the entrypoint for the SonarQube container
+   
+   ![Entrypoint Removal Example](./images/sonar_15.png)
+
+---
+
+### 4️⃣ Kubernetes Cluster Configuration
+
+#### 🎯 Create KIND Cluster
+
+```bash
+kind create cluster --config kind-config.yml
+```
+
+**kind-config.yml:**
+```yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  extraPortMappings:
+    - containerPort: 30080  
+      hostPort: 30080
+      protocol: TCP
+```
+
+#### 🔧 Configure Kubernetes Access
+
+1. **Get kubeconfig:**
    ```bash
    cd $HOME/.kube
    ```
-3. Copy the `config` file contents and encode it.
+
+2. **Encode configuration:**
    ```bash
-   echo -n "copied_content" | base64
+   echo -n "$(cat config)" | base64
    ```
-4. In GitLab, create a CI/CD variable named `KUBECONFIG_CONTENT` and paste the 'encoded_config' contents.
-   ![Encoded Variable paste](../images/k8s_1.png)
-   ![All variables](../images/all_variables.png)
+
+3. **Add to GitLab Variables:**
+   
+   Create a CI/CD variable named `KUBECONFIG_CONTENT` with the encoded config:
+   
+   ![Encoded Variable paste](./images/k8s_1.png)
+   ![All variables](./images/all_variables.png)
 
 ---
 
-### 5. Run the Pipeline
-1. Run the pipeline file [.gitlab-ci.yml](.gitlab-ci.yml).
-2. Monitor the pipeline stages for successful completion.
-   ![Pipeline Status](../images/pipeline_status.png)
+### 5️⃣ Pipeline Execution
 
----
+#### 🚀 Run the Pipeline
+
+1. Execute the pipeline using [.gitlab-ci.yml](.gitlab-ci.yml)
+2. Monitor pipeline stages for successful completion
+
+![Pipeline Status](./images/pipeline_status.png)
+
+
+
+## 🎯 Pipeline Stages Overview
+
+The GitLab CI/CD pipeline includes the following stages:
+
+- **🔨 Build** - Maven compilation and packaging
+- **🔍 Test** - Unit test execution
+- **🛡️ Security Scan** - Trivy vulnerability scanning
+- **📊 Code Quality** - SonarQube analysis
+- **🐳 Docker Build** - Container image creation
+- **🚀 Deploy** - Kubernetes deployment
 
