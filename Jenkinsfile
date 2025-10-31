@@ -18,6 +18,14 @@ pipeline {
     }
   }
 
+  stages {
+    stage('Build Mave') {
+      steps {
+        sh 'mvn -B -DskipTests clean package'
+      }
+    }
+  }
+
   post {
     success {
       echo '✅ Pipeline completed succesfully!!'
