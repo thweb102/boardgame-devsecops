@@ -44,6 +44,18 @@ pipeline {
         }
       }
     }
+
+    stage('Trivy FS Scan')
+      agent {
+        docker {
+          image 'aquasec/trivy:latest'
+          args '--entrypoint--'
+        }
+        steps {
+          sh 'trivy fs --format table -o trivy-fs.html'
+        }
+      }
+
   }
 
 
