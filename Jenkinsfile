@@ -25,7 +25,7 @@ pipeline {
         }
       }
       steps {
-        echo("Build Maven with Agent Docker")
+        echo "Build Maven with Agent Docker"
         sh 'mvn clean package -DskipTests'
       }
     }
