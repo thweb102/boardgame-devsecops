@@ -57,7 +57,6 @@ pipeline {
       }
   }
 
-
   post {
     success {
       echo '✅ Pipeline completed succesfully!!'
