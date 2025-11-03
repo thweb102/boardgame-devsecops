@@ -49,7 +49,7 @@ pipeline {
       agent {
         docker {
           image 'aquasec/trivy:latest'
-          args '--entrypoint==""'
+          args '--entrypoint=""'
         }
       }
       steps {
@@ -65,9 +65,9 @@ pipeline {
     failure {
       echo "❌ Pipeline failed"
     }
-    always {
-      echo '🧹 Cleaning workspace'
-      // cleanWs()
-    }
+    // always {
+    //   echo '🧹 Cleaning workspace'
+    //   cleanWs()
+    // }
   }
 }
