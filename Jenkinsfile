@@ -49,7 +49,7 @@ pipeline {
       agent {
         docker {
           image 'aquasec/trivy:latest'
-          args '--entrypoint--'
+          args '--entrypoint==""'
         }
       }
       steps {
