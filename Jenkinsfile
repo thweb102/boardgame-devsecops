@@ -59,8 +59,8 @@ pipeline {
         always {
           publishHTML ([
             reportDir: '.',
-            reportFiles: 'trivy-fs.html'
-            reportName: "Trivy FS Report"
+            reportFiles: 'trivy-fs.html',
+            reportName: 'Trivy FS Report'
           ])
         }
       }
