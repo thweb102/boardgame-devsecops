@@ -21,7 +21,7 @@ pipeline {
       agent {
         docker {
           image 'maven:3.8.5-openjdk-11'
-          args '-v $HOME/.m2/root/.m2'
+          args '-v $HOME/.m2:/root/.m2'
         }
       }
       steps {
@@ -49,7 +49,7 @@ pipeline {
       agent {
         docker {
           image 'aquasec/trivy:latest'
-          args '--entrypoint=""'
+          args '--entrypoint="" -v /tmp/trivy-cache:/root/.cache'
         }
       }
       steps {
