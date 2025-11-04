@@ -67,14 +67,16 @@ pipeline {
         SONAR_TOKEN = credentials('sonarqube-token')
       }
       steps {
-        sh """
-          sonar-scanner \
-            -Dsonar.projectKey=boardgame \
-            -Dsonar.sources=src/main/java \
-            -Dsonar.java.binaries=target/classes \
-            -Dsonar.host.url=\${SONAR_HOST_URL} \
-            -Dsonar.login=\${SONAR_TOKEN}
-        """
+        withSonarQubeEnv('SonarQube') {
+          sh """
+            sonar-scanner \
+              -Dsonar.projectKey=boardgame \
+              -Dsonar.sources=src/main/java \
+              -Dsonar.java.binaries=target/classes \
+              -Dsonar.host.url=\${SONAR_HOST_URL} \
+              -Dsonar.login=\${SONAR_TOKEN}
+          """
+        }
       }
     }
 
