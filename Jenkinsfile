@@ -59,10 +59,11 @@ pipeline {
       agent {
         docker {
           image 'sonarsource/sonar-scanner-cli:latest'
+          args '-v /tmp/sonar-cache:/opt/sonar-scanner/.sonar'
         }
       }
       environment {
-        SONAR_HOST_URL = 'http://sonarqube.internal'
+        SONAR_HOST_URL = 'http://sonarqube.internal:9000'
         SONAR_TOKEN = credentials('sonarqube-token')
       }
       steps {
