@@ -120,7 +120,7 @@ pipeline {
       }
     }
 
-    stage("Trivy FS Scan") {
+    stage("Security Scan - FS") {
 
       agent {
         docker {
@@ -133,11 +133,11 @@ pipeline {
       }
 
       steps {
-        echo "Trivy FileSystem Scan"
+        echo "Scanning filesystem"
         sh """
           trivy fs \
           --cache-dir /home/scanner/.cache \
-          --format table \ 
+          --format table \
           -o trivy-fs.html \
           .
         """
