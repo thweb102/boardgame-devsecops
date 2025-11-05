@@ -27,19 +27,12 @@ pipeline {
 
   stages {
 
-    stage("Prepare Cache folder") {
+    stage("Set up") {
       steps {
-        echo "Set up cache folder"
+        echo "Set up"
         sh """
-          mkdir -p ${CACHE_BASE}
-          
-          mkdir -p ${TRIVY_CACHE}
-          chmod 775 ${TRIVY_CACHE}
-
-          mkdir -p ${SONAR_CACHE}
-          chmod 775 ${SONAR_CACHE}
-
-          chown -R jenkins:jenkins ${CACHE_BASE}
+          mkdir -p ${CACHE_BASE} ${TRIVY_CACHE}
+          chmod -R 775 ${CACHE_BASE}
         """
       }
     }
@@ -164,7 +157,7 @@ pipeline {
       agent {
         docker {
           image "aquasec/trivy:latest"
-          args '--entrypoint="" -v /var/run/docker.sock:/var/run/docker.sock -v ${TRIVY_CACHE}:/.cache'
+          args '--entrypoint="" --group-add 999 -v /var/run/docker.sock:/var/run/docker.sock -v ${TRIVY_CACHE}:/.cache'
         }
       }
 
