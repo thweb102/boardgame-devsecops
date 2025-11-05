@@ -12,12 +12,12 @@ pipeline {
     HARBOR_CREDS = credentials('jenkins-harbor-credentials')
 
     // Trivy Config
-    TRIVY_CACHE = '/tmp/trivy-cache'
+    TRIVY_CACHE = '/tmp/jenkins/trivy-cache'
 
     // SonarQube Config
     SONAR_HOST_URL = 'http://sonarqube.internal:9000'
     SONAR_TOKEN = credentials('sonarqube-token')
-
+    SONAR_CACHE = "/tmp/jenkins/sonar-cache"
   }
 
   stages {
@@ -72,7 +72,7 @@ pipeline {
       agent {
         docker {
           image 'sonarsource/sonar-scanner-cli:latest'
-          args '-v /tmp/sonar-cache:/opt/sonar-scanner/.sonar'
+          args '-v ${SONAR_CACHE}:/opt/sonar-scanner/.sonar'
         }
       }
 
