@@ -144,7 +144,7 @@ pipeline {
         sh """
           trivy image \
             --severity HIGH,CRITICAL \
-            --format table
+            --format table \
             -o trivy-image.html \
             ${HARBOR_REGISTRY}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
         """
