@@ -27,14 +27,6 @@ pipeline {
 
   stages {
 
-    stage("Prepare caches") {
-      steps {
-        sh """
-          mkdir -r ${TRIV}
-        """
-      }
-    }
-
     stage("Checkout") {
 
       steps {
