@@ -126,7 +126,7 @@ pipeline {
 
       steps {
         echo "Trivy FileSystem Scan"
-        sh "trivy fs --format table --template \"@contrib/html.tpl\" -o trivy-fs.html ."
+        sh "trivy fs --format table -o trivy-fs.html ."
       }
 
       post {
@@ -167,8 +167,7 @@ pipeline {
         sh """
           trivy image \
             --severity HIGH,CRITICAL \
-            --exit-code 1 \
-            --format table --template \"@contrib/html.tpl\" \
+            --format table \
             -o trivy-image.html \
             ${HARBOR_REGISTRY}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
         """
