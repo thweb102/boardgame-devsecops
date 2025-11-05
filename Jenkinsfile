@@ -9,6 +9,9 @@ pipeline {
 
     // Cache
     CACHE_BASE = "/var/lib/jenkins/cache"
+    MAVEN_CACHE = "${CACHE_BASE}/maven"
+    SONAR_CACHE = "${CACHE_BASE}/sonar"
+    TRIVY_CACHE = "${CACHE_BASE}/trivy"
 
     // Harbor Config
     HARBOR_REGISTRY = "harbor.server.thweb.click"
@@ -16,12 +19,10 @@ pipeline {
     HARBOR_CREDS = credentials("jenkins-harbor-credentials")
 
     // Trivy Config
-    TRIVY_CACHE = "${CACHE_BASE}/trivy"
 
     // SonarQube Config
     SONAR_HOST_URL = "http://sonarqube.internal:9000"
     SONAR_TOKEN = credentials("sonarqube-token")
-    SONAR_CACHE = "${CACHE_BASE}/sonar"
     
   }
 
@@ -51,7 +52,7 @@ pipeline {
       agent {
         docker {
           image "maven:3.8.5-openjdk-11"
-          args "-v $HOME/.m2:/root/.m2"
+          args "-v ${MAVEN_CACHE}:/root/.m2"
         }
       }
       
