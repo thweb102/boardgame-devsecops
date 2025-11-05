@@ -28,18 +28,20 @@ pipeline {
   stages {
 
     stage("Prepare Cache folder") {
-      echo "Set up cache folder"
-      sh """
-        mkdir -p ${CACHE_BASE}
-        
-        mkdir -p ${TRIVY_CACHE}
-        chmod 775 ${TRIVY_CACHE}
+      steps {
+        echo "Set up cache folder"
+        sh """
+          mkdir -p ${CACHE_BASE}
+          
+          mkdir -p ${TRIVY_CACHE}
+          chmod 775 ${TRIVY_CACHE}
 
-        mkdir -p ${SONAR_CACHE}
-        chmod 775 ${SONAR_CACHE}
+          mkdir -p ${SONAR_CACHE}
+          chmod 775 ${SONAR_CACHE}
 
-        sudo chown -R jenkins:jenkins ${CACHE_BASE}
-      """
+          sudo chown -R jenkins:jenkins ${CACHE_BASE}
+        """
+      }
     }
 
     stage("Checkout") {
