@@ -2,12 +2,22 @@ pipeline {
   agent any
 
   environment {
-    HARBOR_REGISTRY = 'harbor.server.thweb.click'
-    HARBOR_PROJECT = 'tthau'
+    // Image Config
     IMAGE_NAME = 'boardgame'
     IMAGE_TAG = '${BUILD_NUMBER}'
+
+    // Harbor Config
+    HARBOR_REGISTRY = 'harbor.server.thweb.click'
+    HARBOR_PROJECT = 'boardgame-devsecops'
     HARBOR_CREDS = credentials('jenkins-harbor-credentials')
+
+    // Trivy Config
     TRIVY_CACHE = '/tmp/trivy-cache'
+
+    // SonarQube Config
+    SONAR_HOST_URL = 'http://sonarqube.internal:9000'
+    SONAR_TOKEN = credentials('sonarqube-token')
+
   }
 
   stages {
@@ -65,10 +75,7 @@ pipeline {
           args '-v /tmp/sonar-cache:/opt/sonar-scanner/.sonar'
         }
       }
-      environment {
-        SONAR_HOST_URL = 'http://sonarqube.internal:9000'
-        SONAR_TOKEN = credentials('sonarqube-token')
-      }
+
       steps {
         echo 'SonarQube Analysis'
         withSonarQubeEnv('SonarQube') {
@@ -135,7 +142,11 @@ pipeline {
       agent {
         docker {
           image 'aquasec/trivy:latest'
-          args '--entrypoint="" -v /var/run/docker.sock:/var/run/docker.sock -v ${TRIVY_CACHE}:/.cache'
+          args """
+            --entrypoint="" 
+            -v /var/run/docker.sock:/var/run/docker.sock 
+            -v ${TRIVY_CACHE}:/.cache
+          """
         }
       }
 
