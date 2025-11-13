@@ -3,6 +3,7 @@ pipeline {
 
   environment {
 
+
     // Image Config
     IMAGE_NAME = "app"
     IMAGE_TAG = "${env.GIT_COMMIT?.take(7) ?: 'latest'}"
