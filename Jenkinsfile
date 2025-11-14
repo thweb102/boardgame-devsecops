@@ -242,7 +242,6 @@ pipeline {
 
   } 
 
-
   post {
 
     success {

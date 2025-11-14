@@ -8,4 +8,6 @@ datenow=$(date +%d/%m/%y-%H:%M:%S)
 # Thực hiện commit và push
 git add .
 git commit -m "$datenow"
-git remote | xargs -I {} git push {} $branch --force && echo "Changes pushed to {}/$branch branch"
+
+
+git remote | xargs -I {} bash -c 'git push {} $branch --force && echo "Changes pushed to {}/$branch branch"'
