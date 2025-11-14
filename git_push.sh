@@ -30,8 +30,8 @@ git commit -m "$datenow"
 
 # Push to each remote
 for remote in $(git remote); do
-    echo "------------------------------------------"
     echo ""
+    echo "------------------------------------------"
     echo "→ Pushing to $remote/$branch..."
     if git push $remote $branch --force; then
         echo "✓ Successfully pushed to $remote/$branch"
