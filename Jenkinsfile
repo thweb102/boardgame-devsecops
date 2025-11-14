@@ -231,7 +231,7 @@ pipeline {
     stage("Deploy to K8s") {
       steps {
         sh """
-          kubectl set image deployment/boardgame \
+          kubectl set image deployment/boardgame-release \
             boardgame=${HARBOR_REGISTRY}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} \
             -n boardgame
 
