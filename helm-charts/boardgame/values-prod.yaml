@@ -7,6 +7,8 @@
 # Deploy command:
 #   helm upgrade boardgame-prod . -f values.yaml -f values-prod.yaml
 
+environment: prod
+
 # ============================================================
 # DEPLOYMENT - HA setup with more resources
 # ============================================================

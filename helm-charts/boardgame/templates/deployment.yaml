@@ -44,3 +44,18 @@ spec:
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}
+
+---
+{{- if eq .Values.environment "prod" }}
+# Production-only: Pod Disruption Budget
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "boardgame.fullname" . }}-pdb
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      {{- include "boardgame.selectorLabels" . | nindent 6 }}
+{{- end }}

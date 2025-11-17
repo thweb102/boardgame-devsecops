@@ -7,6 +7,8 @@
 # Deploy command:
 #   helm upgrade boardgame-staging . -f values.yaml -f values-staging.yaml
 
+environment: staging
+
 # ============================================================
 # DEPLOYMENT - HA setup with more resources
 # ============================================================

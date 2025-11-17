@@ -7,6 +7,7 @@
 # Deploy command:
 #   helm upgrade boardgame-dev . -f values.yaml -f values-dev.yaml
 
+environment: dev
 
 # ============================================================
 # DEPLOYMENT - Minimal resources for dev
