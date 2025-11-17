@@ -36,7 +36,7 @@ env:
 # ============================================================
 ingress:
   # STAGING domain
-  host: boardgame.app.thweb.click
+  host: boardgame-staging.app.thweb.click
   
   # SSL enabled (Let's Encrypt)
   tls:
