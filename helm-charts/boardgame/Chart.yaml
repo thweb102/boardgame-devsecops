@@ -10,6 +10,6 @@ maintainers:
   name: trunghau.tran
 name: boardgame
 sources:
-- https://github.com/tthau0102/boardgame-devsecops
+- https://github.com/thweb102/boardgame-devsecops
 type: application
 version: 0.1.0
