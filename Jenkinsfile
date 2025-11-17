@@ -31,7 +31,6 @@ pipeline {
 
     stage("Set up") {
       steps {
-        echo "BRANCH_NAME: ${env.BRANCH_NAME}"
         echo "Set up"
         sh """
           mkdir -p ${MAVEN_CACHE} ${TRIVY_CACHE} ${SONAR_CACHE}
@@ -236,13 +235,10 @@ pipeline {
           
           
           
-          //GIT_BRANCH
-          def gitBranch = env.GIT_BRANCH ?: ''
-          def branchName = gitBranch.replaceAll('^.*/([^/]+)$', '$1')
-
-          echo "=== Branch Detection ==="
-          echo "GIT_BRANCH: ${gitBranch}"
-          echo "Extracted branch: ${branchName}"
+          // Multibranch Branch Detection
+          echo "=== Multibranch Branch Detection ==="
+          echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+          echo "GIT_BRANCH: ${env.GIT_BRANCH}"
 
 
 
@@ -251,11 +247,21 @@ pipeline {
           def namespace = 'boardgame-dev'
           def valuesFile = 'values-dev.yaml'
 
-          if (branchName == 'main' || branchName == 'master') {
+          // PRODUCTION: main or master
+          if (env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'master') {
             environment = 'prod'
             namespace = 'boardgame'
             valuesFile = 'values-prod.yaml'
           }
+
+          // STAGING: hotfix branches (future expansion)
+          else if (env.BRANCH_NAME.startsWith('hotfix/')) {
+            environment = 'staging'
+            namespace = 'boardgame-staging'
+            valuesFile = 'values-staging.yaml'
+          }
+
+          // DEV: all other branches (feature/*, etc)
 
           echo "Deploying to ${environment} environment (namespace: ${namespace})"
 
@@ -275,8 +281,11 @@ pipeline {
           echo "✅ Deployed ${environment} successfully!"
 
           sh """
+            echo "=== Helm Release ==="
             helm list -n ${namespace}
-            kubectl get pods -n ${namespace}
+
+            echo "=== K8s Resources ==="
+            kubectl get all,ingress -n ${namespace}
           """
         }
       }
