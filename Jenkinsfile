@@ -294,6 +294,7 @@ pipeline {
     failure {
       script {
         echo "❌ Deployment failed! Helm will automatically rollback."
+        
       }
     }
 
