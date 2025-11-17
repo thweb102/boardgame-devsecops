@@ -251,7 +251,7 @@ pipeline {
               -f helm-charts/boardgame/values.yaml \
               -f helm-charts/boardgame/${valuesFile} \
               --namespace ${namespace} \
-              --create-namespace
+              --create-namespace \
               --set image.tag=${IMAGE_TAG} \
               --atomic \
               --timeout 5m \
