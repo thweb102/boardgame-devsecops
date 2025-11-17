@@ -231,7 +231,7 @@ pipeline {
 
     stage("Deploy to K8s") {
       steps {
-        scripts {
+        script {
           // Determine environment based on branch
           def environment = 'dev'
           def namespace = 'boardgame-dev'
@@ -249,7 +249,7 @@ pipeline {
           sh """
             helm upgrade --install boardgame-${environment} helm-charts/boardgame \
               -f helm-charts/boardgame/values.yaml \
-              -f helm-charts/boardgame/${valueFile} \
+              -f helm-charts/boardgame/${valuesFile} \
               --namespace ${namespace} \
               --create-namespace
               --set image.tag=${IMAGE_TAG} \
