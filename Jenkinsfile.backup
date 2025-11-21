@@ -47,10 +47,7 @@ pipeline {
     // SonarQube Config || Config on Jenkins UI -> System -> SonarQube Server
     // SONAR_HOST_URL = "http://sonarqube.internal:9000"
     // SONAR_TOKEN = credentials("sonarqube-token")
-
-    // GitOps Repo
-    GITOPS_REPO = "https://gitlab.server.thweb.click/thweb102/boardgame-gitops.git"
-    GITOPS_CREDS = credentials("jenkins-gitops-write-project-token")
+    
   }
 
   stages {
@@ -202,6 +199,7 @@ pipeline {
     }
 
     stage("Security Scan - Image") {
+
       agent {
         docker {
           image "aquasec/trivy:latest"
@@ -213,7 +211,9 @@ pipeline {
           '''
         }
       }
+
       steps {
+
         echo "Trivy Image Scan from inside docker with docker.socket mount"
         sh '''
           trivy image \
@@ -223,7 +223,9 @@ pipeline {
             -o trivy-image.html \
             ${HARBOR_REGISTRY}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
         '''
+
       }
+
       post {
         always {
           publishHTML([
@@ -236,6 +238,7 @@ pipeline {
           ])
         }
       }
+
     }
 
     stage("Push to Registry") {
@@ -255,115 +258,67 @@ pipeline {
       
     }
 
-    stage("Update GitOps Repo") {
+    stage("Deploy to K8s") {
       steps {
         script {
-          echo "Updating GitOps repository..."
+          
+          
+          
+          // Multibranch Branch Detection
+          echo "=== Multibranch Branch Detection ==="
+          echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+          echo "GIT_BRANCH: ${env.GIT_BRANCH}"
 
-          //Determine environment from branch
+
+
+          // Determine environment based on branch
           def environment = 'dev'
           def namespace = 'boardgame-dev'
+          def valuesFile = 'values-dev.yaml'
 
+          // PRODUCTION: main or master
           if (env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'master') {
             environment = 'prod'
             namespace = 'boardgame'
+            valuesFile = 'values-prod.yaml'
           }
 
-          echo "Deploying to ${environment} environment"
+          // STAGING: hotfix branches (future expansion)
+          else if (env.BRANCH_NAME.startsWith('hotfix/')) {
+            environment = 'staging'
+            namespace = 'boardgame-staging'
+            valuesFile = 'values-staging.yaml'
+          }
 
+          // DEV: all other branches (feature/*, etc)
+
+          echo "Deploying to ${environment} environment (namespace: ${namespace})"
+
+          // Deploy with Helm
           sh '''
-            # Clone GitOps repo
-            rm -rf gitops-repo
-            git clone ${GITIPS_REPO} gitops-repo
-            cd gitops-repo
-
-            # Configure git
-            git config user.email "jenkins@thweb.click"
-            git config user.name "Jenkins CI"
-
-            # Update image tag
-            sed -i 's|tag: .*|tag: "${IMAGE_TAG}"|' apps/${environment}/values-override.yaml
-
-            # Commit and push
-            git add apps/${environment}/values-override.yaml
-            git commit -m "Update ${environment} image to ${IMAGE_TAG}
-Build: ${BUILD_NUMBER}
-Commit: ${GIT_COMMIT}
-Branch: ${BRANCH_NAME}"
-            
-            # Push using project token
-            git push https://\${GITOPS_CREDS_USR}:\${GITOPS_CREDS_PSW}@gitlab.server.thweb.click/thweb102/boardgame-gitops.git main
-
-            cd ..
-            rm -rf gitops-repo
+            helm upgrade --install boardgame-${environment} helm-charts/boardgame \
+              -f helm-charts/boardgame/values.yaml \
+              -f helm-charts/boardgame/${valuesFile} \
+              --namespace ${namespace} \
+              --create-namespace \
+              --set image.tag=${IMAGE_TAG} \
+              --atomic \
+              --timeout 5m \
+              --wait
           '''
 
-        echo "GitOps repo updated! ArgoCD will sync within 3 minutes"
+          echo "✅ Deployed ${environment} successfully!"
+
+          sh '''
+            echo "=== Helm Release ==="
+            helm list -n ${namespace}
+
+            echo "=== K8s Resources ==="
+            kubectl get all,ingress -n ${namespace}
+          '''
         }
       }
     }
-
-    // stage("Deploy to K8s") {
-    //   steps {
-    //     script {
-          
-          
-          
-    //       // Multibranch Branch Detection
-    //       echo "=== Multibranch Branch Detection ==="
-    //       echo "BRANCH_NAME: ${env.BRANCH_NAME}"
-    //       echo "GIT_BRANCH: ${env.GIT_BRANCH}"
-
-
-
-    //       // Determine environment based on branch
-    //       def environment = 'dev'
-    //       def namespace = 'boardgame-dev'
-    //       def valuesFile = 'values-dev.yaml'
-
-    //       // PRODUCTION: main or master
-    //       if (env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'master') {
-    //         environment = 'prod'
-    //         namespace = 'boardgame'
-    //         valuesFile = 'values-prod.yaml'
-    //       }
-
-    //       // STAGING: hotfix branches (future expansion)
-    //       else if (env.BRANCH_NAME.startsWith('hotfix/')) {
-    //         environment = 'staging'
-    //         namespace = 'boardgame-staging'
-    //         valuesFile = 'values-staging.yaml'
-    //       }
-
-    //       // DEV: all other branches (feature/*, etc)
-
-    //       echo "Deploying to ${environment} environment (namespace: ${namespace})"
-
-    //       // Deploy with Helm
-    //       sh '''
-    //         helm upgrade --install boardgame-${environment} helm-charts/boardgame \
-    //           -f helm-charts/boardgame/values.yaml \
-    //           -f helm-charts/boardgame/${valuesFile} \
-    //           --namespace ${namespace} \
-    //           --create-namespace \
-    //           --set image.tag=${IMAGE_TAG} \
-    //           --atomic \
-    //           --timeout 5m \
-    //           --wait
-    //       '''
-
-    //       echo "✅ Deployed ${environment} successfully!"
-
-    //       sh '''
-    //         echo "=== Helm Release ==="
-    //         helm list -n ${namespace}
-
-    //         echo "=== K8s Resources ==="
-    //         kubectl get all,ingress -n ${namespace}
-    //       '''
-    //     }
-    //   }
-    // }
   } 
 
   post {
