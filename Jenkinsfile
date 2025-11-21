@@ -279,7 +279,7 @@ pipeline {
 
             # Configure git
             git config user.email "jenkins@thweb.click"
-            git config user.name "Jenkins CI"
+            git config user.name "${GITOPS_CREDS_USR}"
 
             # Update image tag
             sed -i 's|tag: .*|tag: "${IMAGE_TAG}"|' apps/${environment}/values-override.yaml
