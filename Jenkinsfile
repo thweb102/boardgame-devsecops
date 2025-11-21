@@ -280,7 +280,7 @@ pipeline {
               git config user.email "jenkins@thweb.click"
               git config user.name "Jenkins CI"
 
-              sed -i 's|tag: .*|tag: "${IMAGE_TAG}"|' apps/${environment}/values-override.yaml
+              sed -i "s|tag: .*|tag: ${IMAGE_TAG}|" apps/${environment}/values-override.yaml
 
               git add apps/${environment}/values-override.yaml
               git commit -m "Update ${environment} to ${IMAGE_TAG}
